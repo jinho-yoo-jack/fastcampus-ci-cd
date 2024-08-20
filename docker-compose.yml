@@ -5,4 +5,13 @@ services:
       - "8081:8080"
       - "50000:50000"
     volumes:
-      - ${HOST_JENKINS_HOME}:/var/jenkins_home
+      - ${MASTER_JENKINS_HOME}:/var/jenkins_home:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  worker-1:
+    image: jenkins/ssh-agent:latest-jdk21
+    command: sh -c "tail -f /dev/null && service ssh start"
+    volumes:
+      - ${WORKER_1_JENKINS_HOME}:/home/jenkins
+    environment:
+      - JENKINS_SLAVE_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVo4KafREGoD5ooQEV0TX4yerjb0aRC3sbwQhWm+enqj0dX/wawYR0sKyhvR0wMecX4NYd+LSnY4xFcvP+xKCCmtb829mE9xHUWYDZqFT+171lZ+lJj58c4ZDmnwGCNFYJgsadKHJh+Zuuyx4J9HZ8azI1mKVkM8CHDUvah2kH/Uj6WUcLc9Pld8Ao8rc/fCk0otG/+H8AlzB5HgBXbPY48IfSzaijkmwaAoL0iDVQEvctlpCD7lLRQsEGOJFOkoCzRjUgwMNC2q+TsyGHttasXnQI08VWnDHp454UOC+dRzjpYR2LrHOAdtsEGAxjLQihlhkQu2J1rEX3d46FcIsvY5/8+XqEcdpBEmgc5jPdCxCTi1ovT1LPqt6CEhg+VLSw4Vs3i2XalYaiYxk4hJdxx7vixb0+Iww0s1CyDOr8pPorVhpIp9Lgu7oEjlZOs8aSYoIFBNDrsO1WdULEZb1GzJmlDIZKlz7Q/U78D05G39FITIO6aZQlZKyMBDl9RAc=
