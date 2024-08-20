@@ -10,6 +10,9 @@ ENV CUSTOM_NAME default
 # jar 파일을 컨테이너 내부에 복사
 COPY ${JAR_FILE} app.jar
 
+ENTRYPOINT ["java","-jar","app.jar"]
+
+HEALTHCHECK --interval=5m --timeout=3s CMD curl -XGET http://localhost:8080/test || exit 1
+
 # 외부 호스트 8080 포트로 노출
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
