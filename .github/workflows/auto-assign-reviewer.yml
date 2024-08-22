@@ -8,6 +8,6 @@ jobs:
     steps:
       - uses: hkusu/review-assign-action@v1
         with:
-          github-token: ${{ secrets.mac-mini-github-token }}
+          github-token: ${{ secrets.github-actions-token }}
           assignees: ${{ github.actor }}
           reviewers: jinho-yoo-jack
