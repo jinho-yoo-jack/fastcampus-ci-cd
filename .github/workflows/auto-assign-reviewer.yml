@@ -1,0 +1,24 @@
+name: 'Auto Assign Reviewer and Assignee'
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+// PR이 생성됐을 때, Draft PR에서 Ready_for_review 버튼을 눌렀을 때
+// 이 workflow가 실행된다.
+
+jobs:
+  add-reviewers-and-assignee:             
+  // job 이름  
+    runs-on: ubuntu-latest              
+    // 해당 job이 실행되는 환경을 지정하는것으로 github에서 제공하는 Runner 중 하나로
+    // https://docs.github.com/ko/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners
+    // 위 링크에서 확인할 수 있다.
+    steps:
+      - uses: hkusu/review-assign-action@v1
+        // Github Marketplace에 올라와 있는 action
+        with:
+          github-token: ${{ secrets.ACTION_TOKEN }}
+          // repository에 등록한 secret
+          assignees: ${{ github.actor }}
+          reviewers: jinho-yoo-jack
+          // github username
