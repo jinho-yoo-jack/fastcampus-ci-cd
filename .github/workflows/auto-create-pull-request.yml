@@ -1,8 +1,5 @@
 name: Automatically create PR
-on:
-  push:
-    branches:
-      - feature/*
+on: push
 
 jobs:
   create-pr:
