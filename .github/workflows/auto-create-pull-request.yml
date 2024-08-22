@@ -1,18 +1,17 @@
 name: Automatically create PR
 on: push
-
 jobs:
   create-pr:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GA_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Create PR with changes
           base: master
           branch: ${{ github.ref }}
