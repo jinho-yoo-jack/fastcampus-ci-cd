@@ -37,6 +37,3 @@ jobs:
         with:
           name: deployment-artifact
           path: ${{github.workspace}}/deployment-${{ github.run_number }}.zip
-
-  deploy:
-    runs-on: ubuntu-latest
