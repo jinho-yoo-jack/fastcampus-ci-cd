@@ -4,8 +4,11 @@ on: workflow_dispatch
 #    branches:
 #      - master
 
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,3 +24,19 @@ jobs:
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: clean build
+
+      # 3. Upload jar to workspace
+      - name: Create Deployment Bundle
+        run: |
+          mkdir -p deployment/target
+          cp -r build/libs/* deployment/target/
+          zip -r deployment-$BUILD_NUMBER.zip deployment
+
+      - name: Publish Deployment Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-artifact
+          path: ${{github.workspace}}/deployment-${{ github.run_number }}.zip
+
+  deploy:
+    runs-on: ubuntu-latest
