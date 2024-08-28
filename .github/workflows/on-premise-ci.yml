@@ -37,3 +37,23 @@ jobs:
         with:
           name: deployment-artifact
           path: ${{github.workspace}}/deployment-${{ github.run_number }}.zip
+
+  deploy:
+    needs: [ build ]
+    name: Deploy to ${{ needs.get-environment.outputs.environment-name }} Environment
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download Deployment Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-artifact
+
+      - name: Check Deployment Artifact
+        run: |
+          if [ ! -f ./deployment-$BUILD_NUMBER.zip ]; then
+            echo "Error: Deployment artifact not found. Make sure it is created in the build job."
+            exit 1
+          fi
