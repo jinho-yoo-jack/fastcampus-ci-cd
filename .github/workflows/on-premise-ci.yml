@@ -34,10 +34,10 @@ jobs:
         run: ./gradlew clean build
 
       # 4. Gradle 빌드 엑션을 이용해서 프로젝트 빌드
-#      - name: Build with Gradle
-#        uses: gradle/gradle-build-action@v3
-#        with:
-#          arguments: build
+      #- name: Build with Gradle
+      #  uses: gradle/gradle-build-action@v3
+      #  with:
+      #    arguments: build
 
       # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드!!
       - name: Upload build artifact
