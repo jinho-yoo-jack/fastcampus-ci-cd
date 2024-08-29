@@ -25,16 +25,19 @@ jobs:
         with:
           arguments: clean build
 
-      # gradle wrapper 파일에 실행 권한을 부여
+      # 3. gradle wrapper 파일에 실행 권한을 부여
       # gradle wrapper = 개발자가 특정 버전의 Gradle을 미리 설치하지 않고도 Gradle 빌드를 실행할 수 있게 해주는 편리한 도구
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Gradle 빌드 엑션을 이용해서 프로젝트 빌드
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: build
+      - name: Build with Gradlew
+        run: ./gradlew clean build
+
+      # 4. Gradle 빌드 엑션을 이용해서 프로젝트 빌드
+#      - name: Build with Gradle
+#        uses: gradle/gradle-build-action@v3
+#        with:
+#          arguments: build
 
       # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드!!
       - name: Upload build artifact
@@ -55,11 +58,6 @@ jobs:
           name: cicd-study-application
           path: build/libs/
 
-      # EC2에 배포
-      # EC2 SSH 키를 private_key.pem 파일로 저장 ( 위치는 GitHub 서버 )
-      # SCP를 사용하여 JAR 파일을 EC2 서버로 복사
-      # SSH를 사용하여 EC2 서버에 연결하고 현재 실행 중인 Java 프로세스를 종료한 다음 새로운 Java 프로세스 생성 및 실행!!
-      ## NLP 적용하면 IP -> 도메인으로 수정 + EC2 늘리면 run 추가
       - name: Deploy to EC2
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
