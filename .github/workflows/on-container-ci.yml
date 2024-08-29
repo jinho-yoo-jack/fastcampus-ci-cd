@@ -52,7 +52,7 @@ jobs:
   run-docker-image-on-ec2:
     # build-docker-image (위)과정이 완료되어야 실행됩니다.
     needs: build-docker-image
-    runs-on: ip-172-31-46-194
+    runs-on: self-hosted
 
     steps:
       # 1. 최신 이미지를 풀받습니다
