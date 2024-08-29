@@ -25,35 +25,45 @@ jobs:
         with:
           arguments: clean build
 
-      # 3. Upload jar to workspace
-      - name: Create Deployment Bundle
-        run: |
-          mkdir -p deployment/target
-          cp -r build/libs/* deployment/target/
-          zip -r deployment-$BUILD_NUMBER.zip deployment
+      # gradle wrapper 파일에 실행 권한을 부여
+      # gradle wrapper = 개발자가 특정 버전의 Gradle을 미리 설치하지 않고도 Gradle 빌드를 실행할 수 있게 해주는 편리한 도구
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Publish Deployment Artifact
+      # Gradle 빌드 엑션을 이용해서 프로젝트 빌드
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: build
+
+      # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드!!
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: deployment-artifact
-          path: ${{github.workspace}}/deployment-${{ github.run_number }}.zip
+          name: cicd-study-application
+          path: build/libs/cicd-study-0.0.1-SNAPSHOT.jar
 
   deploy:
-    needs: [ build ]
-    name: Deploy to ${{ needs.get-environment.outputs.environment-name }} Environment
-    runs-on: ubuntu-22.04
-    permissions:
-      id-token: write
-      contents: read
+    needs: build
+    runs-on: ubuntu-latest
+
+    # 위의 빌드작업한 JAR 파일 = 아티팩트를 다운로드
     steps:
-      - name: Download Deployment Artifact
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: deployment-artifact
+          name: cicd-study-application
+          path: build/libs/
 
-      - name: Check Deployment Artifact
+      # EC2에 배포
+      # EC2 SSH 키를 private_key.pem 파일로 저장 ( 위치는 GitHub 서버 )
+      # SCP를 사용하여 JAR 파일을 EC2 서버로 복사
+      # SSH를 사용하여 EC2 서버에 연결하고 현재 실행 중인 Java 프로세스를 종료한 다음 새로운 Java 프로세스 생성 및 실행!!
+      ## NLP 적용하면 IP -> 도메인으로 수정 + EC2 늘리면 run 추가
+      - name: Deploy to EC2
         run: |
-          if [ ! -f ./deployment-$BUILD_NUMBER.zip ]; then
-            echo "Error: Deployment artifact not found. Make sure it is created in the build job."
-            exit 1
-          fi
+          echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/cicd-study-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/cicd-study.jar
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}cicd-study.jar > app.log 2>&1 &"
+          rm -f private_key.pem
