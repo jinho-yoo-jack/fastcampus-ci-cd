@@ -57,7 +57,7 @@ jobs:
     steps:
       # 1. 최신 이미지를 풀받습니다
       - name: docker pull
-        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cicd-study
+        run: sudo docker pull ${{ secrets.DOCKERHUB_USER_NAME }}/cicd-study
 
       # 2. 기존의 컨테이너를 중지시킵니다
       - name: docker stop container
