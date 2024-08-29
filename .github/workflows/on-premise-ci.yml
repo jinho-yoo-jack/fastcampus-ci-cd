@@ -4,8 +4,11 @@ on: workflow_dispatch
 #    branches:
 #      - master
 
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,3 +24,44 @@ jobs:
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: clean build
+
+      # 3. gradle wrapper 파일에 실행 권한을 부여
+      # gradle wrapper = 개발자가 특정 버전의 Gradle을 미리 설치하지 않고도 Gradle 빌드를 실행할 수 있게 해주는 편리한 도구
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradlew
+        run: ./gradlew clean build
+
+      # 4. Gradle 빌드 엑션을 이용해서 프로젝트 빌드
+      #- name: Build with Gradle
+      #  uses: gradle/gradle-build-action@v3
+      #  with:
+      #    arguments: build
+
+      # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드!!
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cicd-study-application
+          path: build/libs/cicd-study-0.0.1-SNAPSHOT.jar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    # 위의 빌드작업한 JAR 파일 = 아티팩트를 다운로드
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cicd-study-application
+          path: build/libs/
+
+      - name: Deploy to EC2
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/cicd-study-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER_NAME }}/cicd-study.jar
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USER_NAME }}/cicd-study.jar > app.log 2>&1 &"
+          rm -f private_key.pem
