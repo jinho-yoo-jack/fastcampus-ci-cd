@@ -3,10 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: Set branch
-        required: true
-        type: string
-        default: master
+        description: 'Branch to checkout'
+
 
 #on:
 #  push:
