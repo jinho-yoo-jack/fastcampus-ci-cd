@@ -23,7 +23,7 @@ jobs:
       - id: set-version
         run: |
           echo "${{ github.event.inputs.tags }}"
-          echo "VERSION_NAME=$(${{ github.event.inputs.tags }} | tr '.' '-')" >> $GITHUB_OUTPUT
+          echo "VERSION_NAME=$(echo "v1.0.0" | sed "s/\./\-/g")" >> $GITHUB_OUTPUT
       - name: Check Version Name
         run: |
           echo "${{ steps.set-version.outputs.VERSION_NAME }}"
