@@ -1,5 +1,14 @@
 name: pg-application-ci
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      manual_branch:
+        description: Set branch
+        required: true
+        type: string
+        default: master
+
+#on:
 #  push:
 #    branches:
 #      - master
@@ -11,6 +20,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: check-branch
+        run: echo "${{ github.event.inputs.manual_branch }}"
       - uses: actions/checkout@v4
       # 1. Set up Java 21 on Runner of Github Actions
       - name: Set up JDK 21
