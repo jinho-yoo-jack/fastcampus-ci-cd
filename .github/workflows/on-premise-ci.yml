@@ -1,5 +1,14 @@
 name: pg-application-ci
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      manual_branch:
+        description: Set branch
+        required: true
+        type: string
+        default: master
+
+#on:
 #  push:
 #    branches:
 #      - master

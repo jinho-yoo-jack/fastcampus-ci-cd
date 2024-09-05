@@ -1,0 +1,12 @@
+name: outputs-example-1
+on: workflow_dispatch
+
+jobs:
+  foobar:
+    runs-on: ubuntu-latest
+    steps:
+      - id: set-foo
+        run: echo "foo=bar" >> "$GITHUB_OUTPUT"
+        # $GITHUB_OUTPUT 변수에 key=value 방식으로 값 할당
+      - run: ecoh ${{ steps.set-foo.outputs.foo }}
+        # ${{ steps.STEP_ID.outputs.key }}로 이전 step에서 할당한 값을 가져올 수 있다.
