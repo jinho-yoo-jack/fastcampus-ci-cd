@@ -15,11 +15,12 @@ on:
 
 env:
   BUILD_NUMBER: ${{ github.run_number }}
-  VERSION_NAME: $(echo "v1.0.0" | sed "s/\./\-/g")
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.set-version.outputs.VERSION_NAME }}
     steps:
       - id: set-version
         run: |
@@ -86,6 +87,9 @@ jobs:
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
           chmod 600 private_key.pem
-          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/cicd-study-${{ env.VERSION_NAME }}.jar ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER_NAME }}/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar
-          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USER_NAME }}/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar > app.log 2>&1 &"
+          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/cicd-study-${{ needs.build.outputs.release }}.jar ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER_NAME }}/cicd-study-${{ needs.build.outputs.release }}.jar
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USER_NAME }}/cicd-study-${{ needs.build.outputs.release }}.jar > app.log 2>&1 &"
           rm -f private_key.pem
+          
+          
+          출처: https://kotlinworld.com/398 [조세영의 Kotlin World:티스토리]
