@@ -58,12 +58,16 @@ jobs:
       #  with:
       #    arguments: build
 
+      - name: Add version
+        run: |
+          mv build/libs/cicd-study-0.0.1-SNAPSHOT.jar build/libs/cicd-study-${{ github.event.inputs.tags }}.jar
+
       # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드!!
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: cicd-study-application
-          path: build/libs/cicd-study-0.0.1-SNAPSHOT.jar
+          path: build/libs/cicd-study-${{ github.event.inputs.tags }}.jar
 
   deploy:
     needs: build
