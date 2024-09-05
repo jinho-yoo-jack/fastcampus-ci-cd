@@ -2,9 +2,11 @@ name: pg-application-ci
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Branch to checkout'
-
+      tags:
+        description: 'Set Tags Name'
+        required: true
+        type: string
+        default: master
 
 #on:
 #  push:
@@ -20,7 +22,10 @@ jobs:
     steps:
       - name: check-branch
         run: echo "${{ github.event.inputs.manual_branch }}"
-      - uses: actions/checkout@v4
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          ref: '${{ github.event.inputs.tags }}'
       # 1. Set up Java 21 on Runner of Github Actions
       - name: Set up JDK 21
         uses: actions/setup-java@v4
