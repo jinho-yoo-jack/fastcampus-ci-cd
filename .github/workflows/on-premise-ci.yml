@@ -60,14 +60,14 @@ jobs:
 
       - name: Add version
         run: |
-          mv build/libs/cicd-study-0.0.1-SNAPSHOT.jar build/libs/cicd-study-${{ github.event.inputs.tags }}.jar
+          mv build/libs/cicd-study-0.0.1-SNAPSHOT.jar build/libs/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar
 
       # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드!!
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: cicd-study-application
-          path: build/libs/cicd-study-${{ github.event.inputs.tags }}.jar
+          path: build/libs/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar
 
   deploy:
     needs: build
@@ -85,6 +85,6 @@ jobs:
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
           chmod 600 private_key.pem
-          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/cicd-study-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER_NAME }}/cicd-study.jar
-          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USER_NAME }}/cicd-study.jar > app.log 2>&1 &"
+          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER_NAME }}/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USER_NAME }}/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar > app.log 2>&1 &"
           rm -f private_key.pem
