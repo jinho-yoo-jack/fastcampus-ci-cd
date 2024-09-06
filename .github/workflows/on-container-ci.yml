@@ -20,10 +20,10 @@ jobs:
           distribution: 'temurin'
 
       # 2. Spring Boot 애플리케이션 빌드
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: clean build
+#      - name: Build with Gradle
+#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        with:
+#          arguments: clean build
 
       # 3. gradle wrapper 파일에 실행 권한을 부여
       # gradle wrapper = 개발자가 특정 버전의 Gradle을 미리 설치하지 않고도 Gradle 빌드를 실행할 수 있게 해주는 편리한 도구
