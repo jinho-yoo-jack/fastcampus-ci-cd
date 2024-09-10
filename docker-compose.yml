@@ -17,7 +17,6 @@ services:
 
   worker-1:
     image: jenkins/ssh-agent:latest-jdk21
-    command: tail -f /dev/null
     volumes:
       - ${HOST_JENKINS_WORKER_1}:/home/jenkins
     environment:
