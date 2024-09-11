@@ -13,4 +13,9 @@ public class HealthController {
         return "Health Good";
     }
 
+    @GetMapping("/bad")
+    public String healthBad(){
+        return "Health Bad";
+    }
+
 }
