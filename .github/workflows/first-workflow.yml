@@ -1,5 +1,9 @@
 name: Our First Workflow
-on: push
+on:
+  push:
+    branches:
+      - "feature/**"
+
 jobs:
   echo:
     runs-on: ubuntu-latest
