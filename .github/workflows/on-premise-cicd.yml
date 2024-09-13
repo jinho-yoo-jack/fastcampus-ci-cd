@@ -1,4 +1,4 @@
-name: on-premise-cicd
+name: on-premise-cicd-1
 on:
   workflow_dispatch:
     inputs:  # v1.0.0 v1.0.1 v1.1.0 -> v-1-0-0
