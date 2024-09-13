@@ -1,10 +1,15 @@
 name: Greeting from The Fastcampus
-on: push
+on: workflow_dispatch
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+
 jobs:
   my-job:
     name: My Job
     runs-on: ubuntu-latest
     steps:
+      - name: Call Global ENV
+        run: echo "Build Number -> $BUILD_NUMBER"
       - name: Print a greeting - 1
         env:
           MY_VAR: Hi there! My name is
