@@ -14,9 +14,13 @@ public class HealthController {
     }
 
     @GetMapping("notbad")
-    public String healthNotBad(){
+    public String healthNotBad() {
         return "Health Not Bad";
+    }
 
+    @GetMapping("/bed")
+    public String healthBad(){
+        return "Health Bed";
     }
 
 }
