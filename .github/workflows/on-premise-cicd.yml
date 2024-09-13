@@ -1,7 +1,7 @@
 name: on-premise-cicd
 on:
   workflow_dispatch:
-    inputs:  # v1.0.0 v1.0.1 v1.1.0 -> v-1-0-0
+    inputs:
       tags:
         description: 'Set Tags Name'
         required: true
@@ -13,45 +13,37 @@ jobs:
     outputs:
       release: ${{ steps.set-version.outputs.VERSION_NAME }}
     steps:
-      - id: set-version
-        name: Convert Release Name
+      - id: set-version # v1.0.0 -> v1-0-0
         run: |
-          echo "${{ github.event.inputs.tags }}"
-          echo "VERSION_NAME=$(echo "${{ github.event.inputs.tags }}" | sed "s/\./\-/g")" >> $GIHUB_OUTPUT
+          echo "VERSION_NAME=$(echo "${{ github.event.inputs.tags }}" | sed "s/\./\-/g")" >> $GITHUB_OUTPUT
 
-      - name: Check Version Name # v1-0-0
+      - name: Check Version Name
         run: |
-          echo "${{ github.set-version.outputs.VERSION_NAME }}"
+          echo "Check Version -> ${{ steps.set-version.outputs.VERSOIN_NAME }}"
 
       - name: Checkout Source Code
         uses: actions/checkout@v4
         with:
           ref: '${{ github.event.inputs.tags }}'
 
-      - name: Set up JDK 21
+      - name: Grant execute permission for gradlew
+        run: chmod +w gradlew
+
+      - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: 21
           distribution: 'temurin'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Build with Gradlew
-        run: ./gradlew clean bootJar
+        run: ./gradlew clean test bootJar
 
-      - name: Add version -> cicd-study-vX-X-X.jar
+      - name: Add version
         run: |
-          mv build/libs/cicd-study-0.0.1-SNAPSHOT.jar build/libs/cicd-study-${{ github.set-version.outputs.VERSION_NAME }}.jar
+          mv build/libs/cicd-study-0.0.1-SNAPSHOT.jar build/libs/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cicd-study-application
-          path: build/libs/cicd-study-${{ github.set-version.outputs.VERSION_NAME }}.jar
-
-
-#  deploy:
-#    runs-on: ubuntu-latest
-#    needs:
-#      - build
+          name: cicd-study-application # cicd-study-application.zip
+          path: build/libs/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar
