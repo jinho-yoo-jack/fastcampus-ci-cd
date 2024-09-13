@@ -47,3 +47,24 @@ jobs:
         with:
           name: cicd-study-application # cicd-study-application.zip
           path: build/libs/cicd-study-${{ steps.set-version.outputs.VERSION_NAME }}.jar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cicd-study-application # cicd-study-application.zip
+          path: build/libs/
+
+      - name: Deploy to EC2
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -o StritctHostKeyChecking=no build/libs/cicd-study-${{ needs.build.outputs.release }}.jar ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER_NAME }}/cicd-study-${{ needs.build.outputs.release }}.jar
+          ssh -i private_key.pem -o StritctHostKeyChecking=no ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST }} "pgrep java" | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USER_NAME }}/cicd-study-${{ needs.build.outputs.release }}.jar > app.log 2>&1 &"
+          rm -f private_key.pem
+
