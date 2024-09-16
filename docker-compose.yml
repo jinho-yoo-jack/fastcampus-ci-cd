@@ -1,11 +1,4 @@
 services:
-  app:
-    image: jhy7342/cicd-study:latest
-    ports:
-      - 8080:8080
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-
   jenkins:
     image: jenkins/jenkins:2.471-jdk21
     ports:
@@ -21,4 +14,4 @@ services:
     volumes:
       - ${HOST_JENKINS_WORKER_1}:/home/jenkins
     environment:
-      - JENKINS_SLAVE_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDEPj+A4RT471OT1xcRs5CS1o+dQ2ANAHWkEVe5f6uHa3K4GlNSOnXpZamSuQKw0vQsTWnX6YidPrhhyYjOg4RsE74hRKs2vwQfCHxemo0PyvtdUUCm8u4RyOn59j4M9YnZ9pMbLjBgeWmORC5upXx20RM/rnm6QV1iUBXazc71NM7Qdqj5YJxf4TKjT04c3dvYvgwvmHURqeQPAG2pFVtgF1B/Ms4+qF/12pclSIeNz7RoZ217KJHonc21Yhma+9Mb8gbBVNFxFrsEokgJpg0WYTCDJc1MDirwCdIJdruw+Y5VufFC5Io9pHZ9LZOsGGdzVsyahVkg7qLTm/m596BULb6cFqStQ2CVM1J+t5re1wKM5fAol3w1tz1HhcBTY59WOGoObiFKZXK3ynO/GcO8+p52hQw6R8laEIk7xqgD9qdkViPOj7QCLJ16gay22UIpQ5c/FwXZpHu4YEh4+ObUscjIC3V8+To9Bbvw/tA55r+SQDHdbviEWChfERqPzB8=
+      - JENKINS_SLAVE_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVo4KafREGoD5ooQEV0TX4yerjb0aRC3sbwQhWm+enqj0dX/wawYR0sKyhvR0wMecX4NYd+LSnY4xFcvP+xKCCmtb829mE9xHUWYDZqFT+171lZ+lJj58c4ZDmnwGCNFYJgsadKHJh+Zuuyx4J9HZ8azI1mKVkM8CHDUvah2kH/Uj6WUcLc9Pld8Ao8rc/fCk0otG/+H8AlzB5HgBXbPY48IfSzaijkmwaAoL0iDVQEvctlpCD7lLRQsEGOJFOkoCzRjUgwMNC2q+TsyGHttasXnQI08VWnDHp454UOC+dRzjpYR2LrHOAdtsEGAxjLQihlhkQu2J1rEX3d46FcIsvY5/8+XqEcdpBEmgc5jPdCxCTi1ovT1LPqt6CEhg+VLSw4Vs3i2XalYaiYxk4hJdxx7vixb0+Iww0s1CyDOr8pPorVhpIp9Lgu7oEjlZOs8aSYoIFBNDrsO1WdULEZb1GzJmlDIZKlz7Q/U78D05G39FITIO6aZQlZKyMBDl9RAc=
