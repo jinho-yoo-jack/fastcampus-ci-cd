@@ -12,9 +12,15 @@ public class HealthController {
     public String healthGood(){
         return "Health Good";
     }
+
     @GetMapping("bed")
     public String healthBed(){
         return "Health Bed";
+    }
+
+    @GetMapping("not-bed")
+    public String healthNotBed(){
+        return "Health Not Bed";
     }
 
 }
