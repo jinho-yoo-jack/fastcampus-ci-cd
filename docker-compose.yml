@@ -1,4 +1,10 @@
 services:
+  app:
+    image: jhy7342/cicd-study:latest
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
   jenkins:
     image: jenkins/jenkins:2.471-jdk21
     ports:
