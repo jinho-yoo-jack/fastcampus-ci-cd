@@ -1,0 +1,47 @@
+version: "3"
+networks:
+  vpc:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1
+
+services:
+  app-blue:
+    image: jhy7342/cicd-study:latest
+    ports:
+      - 8080
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    hostname: app-blue
+    networks:
+      vpc:
+        ipv4_address: 192.168.0.3
+
+  app-green:
+    hostname: app-green
+    image: jhy7342/cicd-study:latest
+    ports:
+      - 8080
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    networks:
+      vpc:
+        ipv4_address: 192.168.0.4
+  api-gateway:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    #      - ./nginx/conf.d/:/etc/nginx/conf.d
+    ports:
+      - 80:80
+    hostname: api-gateway
+    networks:
+      vpc:
+        ipv4_address: 192.168.0.2
+    depends_on:
+      - app-blue
+      - app-green
+
