@@ -10,12 +10,14 @@ networks:
 
 services:
   app-blue:
+    hostname: app-blue
     image: jhy7342/cicd-study:latest
     ports:
       - 8080
+    volumes:
+      - ./src/main/resources/application-blue.yml:/root/application.yml
     environment:
       SPRING_PROFILES_ACTIVE: dev
-    hostname: app-blue
     networks:
       vpc:
         ipv4_address: 192.168.0.3
@@ -30,6 +32,7 @@ services:
     networks:
       vpc:
         ipv4_address: 192.168.0.4
+
   api-gateway:
     image: nginx
     volumes:
