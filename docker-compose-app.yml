@@ -15,7 +15,7 @@ services:
     ports:
       - 8080
     volumes:
-      - ./src/main/resources/application-blue.yml:/root/application.yml
+      - ./src/main/resources/application-blue.yml:/application.yml
     environment:
       SPRING_PROFILES_ACTIVE: dev
     networks:
@@ -27,6 +27,8 @@ services:
     image: jhy7342/cicd-study:latest
     ports:
       - 8080
+    volumes:
+      - ./src/main/resources/application-green.yml:/application.yml
     environment:
       SPRING_PROFILES_ACTIVE: dev
     networks:
@@ -35,15 +37,19 @@ services:
 
   api-gateway:
     image: nginx
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    #      - ./nginx/conf.d/:/etc/nginx/conf.d
+    hostname: api-gateway
+    privileged: true
     ports:
       - 80:80
-    hostname: api-gateway
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx-conf/*.conf:/etc/nginx/conf.d/
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    #      - ./nginx/conf.d/:/etc/nginx/conf.d
     networks:
       vpc:
         ipv4_address: 192.168.0.2
+    user: root
     depends_on:
       - app-blue
       - app-green
