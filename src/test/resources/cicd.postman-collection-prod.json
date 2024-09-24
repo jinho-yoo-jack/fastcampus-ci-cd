@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "296ae73d-730a-4787-a171-f2cb93262344",
+		"name": "2 of 9 - cicd",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9566943",
+		"_collection_link": "https://grey-water-9773.postman.co/workspace/FastCamp-2-Of-9---%EC%9D%B4%EC%BB%A4%EB%A8%B8%EC%8A%A4-%EC%A3%BC%EB%AC%B8-%EB%B0%8F-%EA%B2%B0%EC%A0%9C-~319cf024-efd4-4fc0-bcf8-f2257174cbb1/collection/9566943-296ae73d-730a-4787-a171-f2cb93262344?action=share&source=collection_link&creator=9566943"
+	},
+	"item": [
+		{
+			"name": "HealthCheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200 OK\", function(){",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"pm.test(\"Body is 'Health Good'\", function(){",
+							"    let responseMessage = pm.response.text().split(\":::\")[1];",
+							"    responseMessage == \"Good\";",
+							"})",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ec2-18-219-194-210.us-east-2.compute.amazonaws.com/health",
+					"protocol": "http",
+					"host": [
+						"{{APP_URL}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
