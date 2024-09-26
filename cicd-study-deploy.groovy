@@ -1,6 +1,8 @@
 pipeline {
 
-    agent any
+    agent {
+        label 'Controller'
+    }
 
     environment {
         APP_REPO_URL = 'https://github.com/jinho-yoo-jack/fastcampus-ci-cd.git'
@@ -8,6 +10,9 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-access-key') // jenkins에 등록해 놓은 docker hub credentials 이름
         DOCKERHUB_REPOSITORY = "jhy7342/cicd-study"  //docker hub id와 repository 이름
         TARGET_HOST = "ec2-18-219-194-210.us-east-2.compute.amazonaws.com"
+        SONAR_PROJECT_KEY = credentials('sonarProjectKey')
+        SONAR_HOST_URL = 'http://sonarqube:9000'
+        SONAR_LOGIN = credentials('sonarQubeToken')
     }
 
     stages {
@@ -84,7 +89,6 @@ pipeline {
                 }
             }
         }
-
 
 
         stage('Check App Green Status') {
@@ -184,6 +188,23 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+    post {
+        always {
+            sh "newman run src/test/resources/cicd.postman-collection-prod.json \
+                    --reporters cli,junit --reporter-junit-export 'newman/cicd-api-report.xml'"
+        }
+        success {
+            withSonarQubeEnv('sonarqube-server') {
+                sh '''
+                            ./gradlew sonar \
+                                -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+                                -Dsonar.host.url=http://sonarqube:9000 \
+                                -Dsonar.login=$SONAR_LOGIN
+                        '''
+            }
+            junit '**/build/test-results/test/*.xml'
         }
     }
 }

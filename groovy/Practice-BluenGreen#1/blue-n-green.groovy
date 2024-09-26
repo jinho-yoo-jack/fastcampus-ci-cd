@@ -75,8 +75,8 @@ pipeline {
                     echo $RELOAD_RESULT
                     if [[ "$RELOAD_RESULT" == "Reloading nginx: nginx." ]]; then
                         docker-compose -f docker-compose-app.yml down app-green
-                        docker rmi ${DOCKERHUB_REPOSITORY}:latest
-                        docker pull ${DOCKERHUB_REPOSITORY}
+                        docker rmi "${DOCKERHUB_REPOSITORY}":latest
+                        docker pull "${DOCKERHUB_REPOSITORY}"
                         docker-compose -f docker-compose-app.yml up app-green -d
                     fi
                     '
@@ -115,9 +115,9 @@ pipeline {
         }
 
         stage('Apply New Release Blue') {
-//            input {
-//                message "Do you want to continue the deployment?"
-//            }
+            input {
+                message "Do you want to continue the deployment?"
+            }
             steps {
                 script {
                     try {
