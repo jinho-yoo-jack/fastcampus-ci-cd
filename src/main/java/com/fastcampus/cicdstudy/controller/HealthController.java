@@ -17,4 +17,10 @@ public class HealthController {
         return appName + " Health Statue ::: Good";
     }
 
+    @GetMapping("notbad")
+    public String healthNotBad(){
+        return "Health Not Bad";
+
+    }
+
 }
