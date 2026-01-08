@@ -12,6 +12,7 @@ public class HealthController {
     @Value("${spring.application.name}")
     String appName;
 
+    /*Comment*/
     @GetMapping
     public String healthCheck(){
         return appName + " Health Statue ::: Good";
