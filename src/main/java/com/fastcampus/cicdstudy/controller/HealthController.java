@@ -14,7 +14,7 @@ public class HealthController {
 
     @GetMapping
     public String healthCheck(){
-        return appName + " Health Statue ::: Good";
+        return appName + " Health Statue ::: GoodTEST";
     }
 
 }
